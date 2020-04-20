@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>lesson_8</title>
+    <style>
+
+        #form1{
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+        }
+
+        input{
+            margin: 3px;
+        }
+
+    </style>
+</head>
+<body>
+
+<textarea id="textarea"></textarea>
+
+<form id="form1">
+    <textarea id="textarea1" name="textarea"></textarea>
+    <input type="text" name="text" id="input1">
+    <input type="number" name="number" id="input2">
+    <input type="checkbox" name="checkbox" id="input3" value="false">
+    <input type="search" name="search" id="input4">
+    <input type="password" name="password" id="input5">
+    <input type="radio" name="radio" id="input6" value="false">
+    <input type="radio" name="radio" id="input6_7" value="false">
+    <input type="checkbox" name="checkbox" id="input7" value="false" >
+    <input type="email" name="email" id="input8">
+    <select id="select" name="select">
+        <option id="option1">Option1</option>
+        <option id="option2">Option2</option>
+        <option id="option3">Option3</option>
+        <option id="option4">Option4</option>
+        <option id="option5">Option5</option>
+    </select>
+</form>
+
+
+<textarea id="textarea2" name="textarea2"></textarea>
+
+    <div>
+        <input type="button" id="left_arrow" value="left_arrow">
+        <input type="button" id="right_arrow" value="right_arrow">
+    </div>
+
+    <button id="button">SAVE</button>
+
+<!--<div id="mainDiv">
+    <form name="form" id="mainForm">
+
+        <div>
+            <h2>First name, Last name</h2>
+            <input type="text" name="input" id="FNP" value="">
+            <input type="button" name="redact" id="FNPRed" value="REDACT">
+            <input type="button" name="delete" id="FNPDel" value="DELETE">
+        </div>
+
+        <div>
+            <h2>phone num.</h2>
+            <input type="number" name="input" id="number" value="">
+            <input type="button" name="redact" id="numberRed" value="REDACT">
+            <input type="button" name="delete" id="numberDel" value="DELETE">
+        </div>
+
+        <div>
+            <h2>email</h2>
+            <input type="email" name="input" id="email" value="">
+            <input type="button" name="redact" id="emailRed" value="REDACT">
+            <input type="button" name="delete" id="emailDel" value="DELETE">
+        </div>
+
+        <div>
+            <h2>Your firm</h2>
+            <input type="text" name="input" id="firm" value="">
+            <input type="button" name="redact" id="firmRed" value="REDACT">
+            <input type="button" name="delete" id="firmDel" value="DELETE">
+        </div>
+
+        <div>
+            <h2>Your department</h2>
+            <input type="text" name="input" id="department" value="">
+            <input type="button" name="redact" id="departmentRed" value="REDACT">
+            <input type="button" name="delete" id="departmentDel" value="DELETE">
+        </div>
+
+        <div>
+            <h2>Your birthday</h2>
+            <input type="date" name="input" id="date" value="">
+            <input type="button" name="redact" id="dateRed" value="REDACT">
+            <input type="button" name="delete" id="dateDel" value="DELETE">
+        </div>
+    </form>
+</div>-->
+
+<script>
+
+// 1 - Дана textarea.
+// В неё вводится текст.
+// Сделайте так, чтобы после захода на эту страницу через некоторое время,
+// введенный текст остался в textarea.
+
+const textArea = document.getElementById('textarea');
+const setItem = localStorage.getItem('textarea', textArea.value);
+
+if (setItem) {
+    textArea.value = setItem
+
+} else {
+    localStorage.setItem('textarea', textArea.value);
+}
+
+textArea.oninput = (e) => {
+    localStorage.setItem('textarea', textArea.value)
+};
+
+// 2 - Дана форма с инпутами, текстареа, чекбоксами, радио кнопочками, селектами и тп.
+//Пользователь вводит какие-то данные и закрывает страницу (не факт, что он заполнил всю форму).
+//Сделайте так, чтобы при следующем заходе на страницу введенные им ранее данные стояли на своих местах.
+//Сделайте ваш скрипт как можно более универсальным.
+
+const form1 = document.getElementById('form1');
+getItem(form1);
+
+form1.oninput = function (value) {
+    // let save = value.target;
+    let id = value.target.id;
+    if (value.target.name === 'checkbox' || value.target.name === 'radio') {
+        localStorage.setItem(id, value.target.checked);
+        // if (id, value.target.checked = 'true') {id, value.target.checked = 'false'}
+    } else
+        localStorage.setItem(id, value.target.value);
+};
+
+function getItem (val) {
+    for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.hasOwnProperty(val[i].id)) {
+            val[i].value  = localStorage.getItem(val[i].id);
+            if (val[i].value === 'true') {
+                console.log('gooood');
+                val[i].setAttribute('checkbox', 'checkbox')
+            }
+        }
+    }
+}
+
+// 3 -Дан текстареа. В него можно ввести данные, нажать кнопку "сохранить"
+// и они "фикисруются" (в хранилище), затем поредактировать их, затем еще
+// поредактировать и возможно еще.....
+// Требование : хранить историю своих изменений (даже после перезагрузки страницы).
+// Сверху над текстареа должны появится стрелочки, с помощью которых можно
+// перемещаться по истории (не забудьте!чекпоинт истории - нажатеи кнопки сохранить).
+
+const textArea2 = document.getElementById('textarea2');
+const leftArrow = document.getElementById('left_arrow');
+const rightArrow = document.getElementById('right_arrow');
+const button = document.getElementById('button');
+
+button.onclick = function () {
+    localStorage.setItem(localStorage.length + 1, textArea2.value)
+};
+
+leftArrow.onclick = function () {
+    leftArrow.style.visibility = 'visible';
+    let index;
+    for (const key in localStorage) {
+        console.log(key);
+        if (localStorage.hasOwnProperty(key)) {
+            if (localStorage.getItem(key) === textArea2.value){
+                index = key;
+            }
+        }
+    }
+    if (index === '1'){
+        leftArrow.style.visibility = 'hidden';
+        return;
+    }
+    textArea2.value = localStorage.getItem(index - 1);
+    if (rightArrow.style.visibility = 'hidden' || leftArrow.style.visibility === 'hidden') {
+        leftArrow.style.visibility = 'visible';
+        rightArrow.style.visibility = 'visible';
+    }
+};
+
+rightArrow.onclick = function () {
+    leftArrow.style.visibility = 'visible';
+    let index;
+    for (const key in localStorage) {
+        console.log(key);
+        if (localStorage.hasOwnProperty(key)) {
+            if (localStorage.getItem(key) === textArea2.value){
+                index = key;
+            }
+        }
+    }
+    if (index === localStorage.length.toString()){
+        rightArrow.style.visibility = 'hidden';
+        return;
+    }
+    textArea2.value = localStorage.getItem(+index + 1);
+}
+
+// 4 - Реализуйте записную книгу, хранящую данные в локальном хранилище.
+// Данные которые надо сохранять : ФИО, номер, почта, фирма, отдел, день рождения
+// Данные вводить через соответсвующую форму.
+// --Каждому контакту добавить кнопку для удаления контакта.
+// --Каждому контакту добавить кнопку редактироваиня. При нажати на
+// нее появляется форма, в которой есть все необходимые инпуты
+// для редактирования, которые уже заполнены данными объекта
+
+
+let  formsNod = document.forms.form.redact;
+let  forms = document.forms.form;
+console.log(formsNod);
+
+forms.onclick = function () {
+        for (let i = 0; i < forms.length; i++) {
+            const form = forms[i];
+            console.log(form);
+        }
+}
+
+</script>
+
+</body>
+</html>
